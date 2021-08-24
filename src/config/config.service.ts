@@ -10,7 +10,6 @@ export class ConfigService {
       const existFile = fs.existsSync(envFile);
       if (existFile) {
         this.envConfig = parse(fs.readFileSync(envFile));
-        console.log(this.envConfig);
       }
     } else {
       this.envConfig = {
