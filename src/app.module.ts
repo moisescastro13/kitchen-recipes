@@ -6,9 +6,19 @@ import { RoleModule } from './modules/role/role.module';
 import { ConfigModule } from './config/config.module';
 import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.keys';
+import { RecipeModule } from './modules/recipe/recipe.module';
+import { IngredientsModule } from './modules/ingredients/ingredients.module';
 
 @Module({
-  imports: [UserModule, DataBaseModule, AuthModule, RoleModule, ConfigModule],
+  imports: [
+    UserModule,
+    DataBaseModule,
+    AuthModule,
+    RoleModule,
+    ConfigModule,
+    RecipeModule,
+    IngredientsModule,
+  ],
 })
 export class AppModule {
   static port: number | string;
