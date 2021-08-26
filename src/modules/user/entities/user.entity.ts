@@ -1,4 +1,4 @@
-import { userStatus } from 'src/shared/enums/UserStatus.enum';
+import { Status } from '../../../shared/enums';
 import {
   BaseEntity,
   Column,
@@ -35,7 +35,7 @@ export class UserEntity extends BaseEntity {
 
   Role: string;
 
-  @Column({ default: userStatus.ACTIVE, type: 'varchar', length: 8 })
+  @Column({ default: Status.ACTIVE, type: 'varchar', length: 8 })
   Status: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })

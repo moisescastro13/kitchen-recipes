@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToClass } from 'class-transformer';
 
-import { userStatus } from '../../../shared/enums/UserStatus.enum';
+import { Status } from '../../../shared/enums/Status.enum';
 import { ReadUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
 import { UserRepository } from '../user.repository';
@@ -20,7 +20,7 @@ export class UserService {
 
   async getAll(): Promise<ReadUserDto[]> {
     const users = await this._userRepository.find({
-      where: { Status: userStatus.ACTIVE },
+      where: { Status: Status.ACTIVE },
     });
     return users.map((user: UserEntity) => plainToClass(ReadUserDto, user));
   }
@@ -29,7 +29,7 @@ export class UserService {
     if (!id) throw new BadRequestException();
 
     const userExist: UserEntity = await this._userRepository.findOne(id, {
-      where: { Status: userStatus.ACTIVE },
+      where: { Status: Status.ACTIVE },
     });
     if (!userExist) throw new NotFoundException();
 
@@ -40,7 +40,7 @@ export class UserService {
     if (!id) throw new BadRequestException();
 
     const userExist: UserEntity = await this._userRepository.findOne(id, {
-      where: { Status: userStatus.ACTIVE },
+      where: { Status: Status.ACTIVE },
     });
     if (!userExist) throw new NotFoundException();
 
@@ -54,11 +54,11 @@ export class UserService {
     if (!id) throw new BadRequestException();
 
     const userExist: UserEntity = await this._userRepository.findOne(id, {
-      where: { Status: userStatus.ACTIVE },
+      where: { Status: Status.ACTIVE },
     });
     if (!userExist) throw new NotFoundException();
 
-    userExist.Status = userStatus.INACTIVE;
+    userExist.Status = Status.INACTIVE;
     await userExist.save();
     return true;
   }
