@@ -20,7 +20,7 @@ export class IngredientEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 80, nullable: false })
   name: string;
 
-  @Column({ type: 'text', length: 150, nullable: true })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   @OneToOne(type => UserEntity, { cascade: true, nullable: true, eager: true })

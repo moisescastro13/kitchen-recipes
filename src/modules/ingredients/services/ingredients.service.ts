@@ -33,13 +33,13 @@ export class IngredientService {
       where: { Status: Status.ACTIVE },
     });
 
-    if (!userExist) throw new NotFoundException();
+    //if (!userExist) throw new NotFoundException();
 
     const savedIngredient: IngredientEntity =
       await this._ingredientRepository.save({
         name: createIngredientDto.name,
         description: createIngredientDto.description,
-        createBy: userExist,
+        //createBy: userExist,
       });
     return plainToClass(ReadIngredientDto, savedIngredient);
   }

@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { UpdateUserDto } from '../dto';
-import { ReadUserDto } from '../entities/user.entity';
+import { ReadUserDto } from '../dto';
 import { UserService } from '../services/user.service';
 
 @Controller('user')

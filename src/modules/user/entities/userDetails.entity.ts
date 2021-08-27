@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('users')
+@Entity('users_details')
 export class UserDetailsEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
