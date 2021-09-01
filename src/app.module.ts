@@ -8,6 +8,8 @@ import { ConfigService } from './config/config.service';
 import { Configuration } from './config/config.keys';
 import { RecipeModule } from './modules/recipe/recipe.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { Service } from './modules/repice/.service';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -18,7 +20,9 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
     ConfigModule,
     RecipeModule,
     IngredientsModule,
+    CategoriesModule,
   ],
+  providers: [Service],
 })
 export class AppModule {
   static port: number | string;

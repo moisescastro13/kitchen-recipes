@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Post,
   Put,
 } from '@nestjs/common';
 import { UpdateUserDto } from '../dto';
@@ -14,7 +15,10 @@ import { UserService } from '../services/user.service';
 @Controller('user')
 export class UserController {
   constructor(private readonly _userService: UserService) {}
-
+  @Post()
+  create(@Body() createUser) {
+    return this._userService.create(createUser);
+  }
   @Get()
   getAll(): Promise<ReadUserDto[]> {
     return this._userService.getAll();

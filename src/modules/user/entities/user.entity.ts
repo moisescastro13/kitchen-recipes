@@ -17,7 +17,7 @@ export class UserEntity extends BaseEntity {
   id: number;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
-  userName: string;
+  username: string;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   email: string;
@@ -25,13 +25,13 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   password: string;
 
-  @OneToOne(tpye => UserDetailsEntity, {
+  @OneToOne(type => UserDetailsEntity, {
     cascade: true,
     nullable: false,
     eager: true,
   })
   @JoinColumn({ name: 'detail_id' })
-  userDetails: UserDetailsEntity;
+  details: UserDetailsEntity;
 
   Role: string;
 

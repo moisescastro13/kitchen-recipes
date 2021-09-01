@@ -7,7 +7,7 @@ export class UpdateUserDto {
   readonly id: number;
 
   @IsString()
-  readonly userName: string;
+  readonly username: string;
 
   @IsEmail()
   readonly email: string;

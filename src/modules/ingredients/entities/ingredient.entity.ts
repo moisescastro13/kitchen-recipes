@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,7 @@ import {
 
 import { Status } from '../../../shared/enums';
 import { UserEntity } from '../../user/entities/user.entity';
+import { RecipeEntity } from '../../recipe/entities/Recipe.entity';
 
 @Entity('ingredients')
 export class IngredientEntity extends BaseEntity {

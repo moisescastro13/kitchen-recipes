@@ -33,13 +33,13 @@ export class IngredientService {
       where: { Status: Status.ACTIVE },
     });
 
-    //if (!userExist) throw new NotFoundException();
+    if (!userExist) throw new NotFoundException();
 
     const savedIngredient: IngredientEntity =
       await this._ingredientRepository.save({
         name: createIngredientDto.name,
         description: createIngredientDto.description,
-        //createBy: userExist,
+        createBy: userExist,
       });
     return plainToClass(ReadIngredientDto, savedIngredient);
   }
@@ -66,8 +66,21 @@ export class IngredientService {
     return plainToClass(ReadIngredientDto, ingredient);
   }
 
-  async update(id: number, updateIngredientDto: UpdateIngredientDto) {
-    return `This action updates a #${id} ingredient`;
+  async update(
+    id: number,
+    updateIngredientDto: UpdateIngredientDto,
+  ): Promise<ReadIngredientDto> {
+    const ingredient = await this._ingredientRepository.findOne(id, {
+      where: { Status: Status.ACTIVE },
+    });
+
+    if (!ingredient) throw new NotFoundException();
+
+    const editedIngredient = Object.assign(ingredient, updateIngredientDto);
+    const updatedIngredient = await this._ingredientRepository.save(
+      editedIngredient,
+    );
+    return plainToClass(ReadIngredientDto, updatedIngredient);
   }
 
   async remove(id: number): Promise<void> {

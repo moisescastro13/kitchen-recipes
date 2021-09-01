@@ -1,4 +1,3 @@
-import { Status } from '../../../shared/enums';
 import {
   BaseEntity,
   Column,
@@ -7,17 +6,18 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Status } from '../../../shared/enums';
 
-@Entity('user_details')
-export class UserDetailsEntity extends BaseEntity {
+@Entity('category')
+export class CategoryEntity extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
+  @Column({ nullable: false, type: 'text' })
   name: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: true })
-  lastName: string;
+  @Column({ nullable: true, type: 'varchar', length: 100 })
+  description?: string;
 
   @Column({ default: Status.ACTIVE, type: 'varchar', length: 8 })
   Status: string;

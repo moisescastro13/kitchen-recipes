@@ -9,6 +9,7 @@ import { plainToClass } from 'class-transformer';
 import { Status } from '../../../shared/enums/Status.enum';
 import { ReadUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
+import { UserDetailsEntity } from '../entities/userDetails.entity';
 import { UserRepository } from '../user.repository';
 
 @Injectable()
@@ -17,6 +18,18 @@ export class UserService {
     @InjectRepository(UserRepository)
     private readonly _userRepository: UserRepository,
   ) {}
+
+  async create(user: UserEntity) {
+    const newUser = this._userRepository.create({
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      Role: user.Role,
+    });
+    const userDetail = new UserDetailsEntity();
+    newUser.details = userDetail;
+    return newUser.save();
+  }
 
   async getAll(): Promise<ReadUserDto[]> {
     const users = await this._userRepository.find({
@@ -44,7 +57,7 @@ export class UserService {
     });
     if (!userExist) throw new NotFoundException();
 
-    userExist.userName = user.userName;
+    userExist.username = user.username;
     userExist.email = user.email;
     const savedUser = await userExist.save();
     return plainToClass(ReadUserDto, savedUser);

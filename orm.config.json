@@ -2,14 +2,15 @@
      "type": "postgres",
      "host": "localhost",
      "username": "postgres",
-     "password": "password",
+     "password": "postgres",
      "database": "kitchen-recipes",
-     "port": 5432,
+     "port": 5432,  
+     "dropSchema": true,
      "synchronize": true,
      "entities": ["src/**/**/**/*.entity{.ts,.js}"],
-     "migrations": ["src/database/migrations/*{.ts,.js}"],
+     "migrations": ["src/Database/migrations/*{.ts,.js}"],
      "cli": {
          "entitiesDir": "src/entity",
-         "migrationsDir": "src/database/migrations"
+         "migrationsDir": "src/Database/migrations"
      }
 }
