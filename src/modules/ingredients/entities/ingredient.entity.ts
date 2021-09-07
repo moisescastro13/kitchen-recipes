@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -37,4 +38,8 @@ export class IngredientEntity extends BaseEntity {
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date;
+
+  @ManyToMany(type => RecipeEntity, recipe => recipe.ingredients)
+  @JoinColumn()
+  recipes: RecipeEntity[];
 }

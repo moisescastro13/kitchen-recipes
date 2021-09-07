@@ -17,7 +17,7 @@ export const DatabaseProviders = [
         password: config.get(Configuration.PASSWORD),
         port: Number(config.get(Configuration.DBPORT)),
         //dropSchema: true,
-        //synchronize: true,
+        synchronize: true,
         entities: [__dirname + '/../../modules/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/../migrations/*{.ts,.js}'],
       } as ConnectionOptions;

@@ -68,7 +68,7 @@ export class CategoriesService {
     if (!category) throw new NotFoundException();
 
     const editedCategory = Object.assign(category, updateCategoryDto);
-    const updatedCategory = this._categoryRepository.save(editedCategory);
+    const updatedCategory = await this._categoryRepository.save(editedCategory);
 
     return plainToClass(ReadCategoryDto, updatedCategory);
   }

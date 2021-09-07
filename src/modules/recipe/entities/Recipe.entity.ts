@@ -52,13 +52,11 @@ export class RecipeEntity extends BaseEntity {
   @JoinColumn({ name: 'details_id' })
   recipeDetails: RecipeDetailsEntity;
 
-  @ManyToMany(type => IngredientEntity, {
+  @ManyToMany(type => IngredientEntity, ingredient => ingredient.recipes, {
     eager: true,
-    cascade: true,
-    nullable: false,
   })
   @JoinTable({ name: 'ingredients_recipes' })
-  ingredient: IngredientEntity[];
+  ingredients: IngredientEntity[];
 
   @Column({ default: Status.ACTIVE, type: 'varchar', length: 8 })
   Status: string;

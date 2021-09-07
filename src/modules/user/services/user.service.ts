@@ -11,24 +11,35 @@ import { ReadUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
 import { UserDetailsEntity } from '../entities/userDetails.entity';
 import { UserRepository } from '../user.repository';
+import { RoleRepository } from '../../role/role.repository';
+import { RoleEntity } from '../../role/entities/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserRepository)
     private readonly _userRepository: UserRepository,
+    @InjectRepository(RoleRepository)
+    private readonly _roleRepository: RoleRepository,
   ) {}
 
-  async create(user: UserEntity) {
-    const newUser = this._userRepository.create({
-      username: user.username,
-      email: user.email,
-      password: user.password,
-      Role: user.Role,
+  async addRoleToUser(roleId: number, userId: number) {
+    if (!userId) throw new BadRequestException();
+    if (!roleId) throw new BadRequestException();
+
+    const roleExist: RoleEntity = await this._roleRepository.findOne(roleId, {
+      where: { status: Status.ACTIVE },
     });
-    const userDetail = new UserDetailsEntity();
-    newUser.details = userDetail;
-    return newUser.save();
+    if (!roleExist) throw new NotFoundException();
+
+    const userExist: UserEntity = await this._userRepository.findOne(userId, {
+      where: { Status: Status.ACTIVE },
+    });
+    if (!userExist) throw new NotFoundException();
+
+    userExist.roles.push(roleExist);
+    await this._userRepository.save(userExist);
+    return true;
   }
 
   async getAll(): Promise<ReadUserDto[]> {
@@ -57,10 +68,10 @@ export class UserService {
     });
     if (!userExist) throw new NotFoundException();
 
-    userExist.username = user.username;
-    userExist.email = user.email;
-    const savedUser = await userExist.save();
-    return plainToClass(ReadUserDto, savedUser);
+    const editedUser = Object.assign(userExist, user);
+    await this._userRepository.update(id, editedUser);
+
+    return plainToClass(ReadUserDto, editedUser);
   }
 
   async delete(id: number): Promise<boolean> {
@@ -71,8 +82,7 @@ export class UserService {
     });
     if (!userExist) throw new NotFoundException();
 
-    userExist.Status = Status.INACTIVE;
-    await userExist.save();
+    await this._userRepository.update(id, { Status: Status.INACTIVE });
     return true;
   }
 }
