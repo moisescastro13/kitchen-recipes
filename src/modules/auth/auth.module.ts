@@ -6,9 +6,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { AuthRepository } from './auth.repository';
-import { ConfigService } from '../../config/config.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '../../config/config.module';
+import { ConfigService } from '../../config/config.service';
 import { Configuration } from '../../config/config.keys';
 
 @Module({

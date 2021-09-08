@@ -21,7 +21,7 @@ export class AuthRepository extends Repository<UserEntity> {
       where: { name: RoleType.GENERAL },
     });
 
-    user.roles.push(defaultRole);
+    user.roles = [defaultRole];
 
     const details = new UserDetailsEntity();
     user.details = details;

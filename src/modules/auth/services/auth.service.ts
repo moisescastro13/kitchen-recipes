@@ -4,12 +4,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
+import { plainToClass } from 'class-transformer';
 
 import { AuthRepository } from '../auth.repository';
-import { SignInDto, SignUpDto } from '../dto';
+import { LoggedInDto, SignInDto, SignUpDto } from '../dto';
 import { IjwtPayload } from '../intefaces';
 import { RoleType } from '../../../shared/enums';
 
@@ -32,7 +33,7 @@ export class AuthService {
     return this._authRepositoy.signUp(signupDto);
   }
 
-  async signIn(signinDto: SignInDto): Promise<{ token: string }> {
+  async signIn(signinDto: SignInDto): Promise<LoggedInDto> {
     const { username, password } = signinDto;
 
     const userExist = await this._authRepositoy.findOne({
@@ -52,6 +53,6 @@ export class AuthService {
       roles: userExist.roles.map(role => role.name as RoleType),
     };
     const token = this._jwtService.sign(payload);
-    return { token };
+    return plainToClass(LoggedInDto, { token, user: userExist });
   }
 }

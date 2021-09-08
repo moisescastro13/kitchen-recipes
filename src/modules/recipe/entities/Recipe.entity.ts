@@ -58,6 +58,9 @@ export class RecipeEntity extends BaseEntity {
   @JoinTable({ name: 'ingredients_recipes' })
   ingredients: IngredientEntity[];
 
+  @Column({ default: false, type: 'boolean' })
+  approved: boolean;
+
   @Column({ default: Status.ACTIVE, type: 'varchar', length: 8 })
   Status: string;
 

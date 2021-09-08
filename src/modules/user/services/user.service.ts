@@ -9,7 +9,6 @@ import { plainToClass } from 'class-transformer';
 import { Status } from '../../../shared/enums/Status.enum';
 import { ReadUserDto, UpdateUserDto } from '../dto';
 import { UserEntity } from '../entities/user.entity';
-import { UserDetailsEntity } from '../entities/userDetails.entity';
 import { UserRepository } from '../user.repository';
 import { RoleRepository } from '../../role/role.repository';
 import { RoleEntity } from '../../role/entities/role.entity';
@@ -23,19 +22,19 @@ export class UserService {
     private readonly _roleRepository: RoleRepository,
   ) {}
 
-  async addRoleToUser(roleId: number, userId: number) {
+  async setRoleToUser(roleId: number, userId: number) {
     if (!userId) throw new BadRequestException();
     if (!roleId) throw new BadRequestException();
 
     const roleExist: RoleEntity = await this._roleRepository.findOne(roleId, {
       where: { status: Status.ACTIVE },
     });
-    if (!roleExist) throw new NotFoundException();
+    if (!roleExist) throw new NotFoundException('This role does not exist');
 
     const userExist: UserEntity = await this._userRepository.findOne(userId, {
       where: { Status: Status.ACTIVE },
     });
-    if (!userExist) throw new NotFoundException();
+    if (!userExist) throw new NotFoundException('This user does not exist');
 
     userExist.roles.push(roleExist);
     await this._userRepository.save(userExist);
@@ -60,7 +59,7 @@ export class UserService {
     return plainToClass(ReadUserDto, userExist);
   }
 
-  async update(id: number, user: UpdateUserDto): Promise<ReadUserDto> {
+  async update(id: number, user: Partial<UpdateUserDto>): Promise<ReadUserDto> {
     if (!id) throw new BadRequestException();
 
     const userExist: UserEntity = await this._userRepository.findOne(id, {
@@ -69,9 +68,9 @@ export class UserService {
     if (!userExist) throw new NotFoundException();
 
     const editedUser = Object.assign(userExist, user);
-    await this._userRepository.update(id, editedUser);
+    const updatedUser = await this._userRepository.save(editedUser);
 
-    return plainToClass(ReadUserDto, editedUser);
+    return plainToClass(ReadUserDto, updatedUser);
   }
 
   async delete(id: number): Promise<boolean> {
