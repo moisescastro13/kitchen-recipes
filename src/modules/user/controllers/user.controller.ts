@@ -16,17 +16,22 @@ import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDto } from '../dto';
 import { ReadUserDto } from '../dto';
 import { UserService } from '../services/user.service';
+import { Roles } from '../../role/decorators/role.decorator';
+import { RoleGuard } from '../../role/guards/role.guard';
+import { RoleType } from '../../../shared/enums';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly _userService: UserService) {}
 
-  @UseGuards(AuthGuard())
+  @Roles(RoleType.ROOT, RoleType.ADMIN)
+  @UseGuards(AuthGuard(), RoleGuard)
   @Get()
   getAll(): Promise<ReadUserDto[]> {
     return this._userService.getAll();
   }
 
+  @UseGuards(AuthGuard())
   @Get(':id')
   getOne(@Param('id', ParseIntPipe) id: number): Promise<ReadUserDto> {
     return this._userService.getOne(id);
@@ -46,6 +51,8 @@ export class UserController {
     return this._userService.delete(id);
   }
 
+  @Roles(RoleType.ROOT)
+  @UseGuards(AuthGuard(), RoleGuard)
   @Post('setRole/:userId/:roleId')
   setRoleToUser(
     @Param('userId', ParseIntPipe) userId: number,
