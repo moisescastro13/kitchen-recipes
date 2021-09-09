@@ -28,7 +28,8 @@ export class CategoriesService {
       where: { name: category.name },
     });
 
-    if (categoryExist) throw new ConflictException('');
+    if (categoryExist)
+      throw new ConflictException('This category already exist');
 
     const newCategory = await this._categoryRepository.save({
       name: category.name,

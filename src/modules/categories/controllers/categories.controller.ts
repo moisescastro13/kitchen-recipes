@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto } from '../dto/create-category.dto';
@@ -13,33 +15,34 @@ import { UpdateCategoryDto } from '../dto/update-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly _categoriesService: CategoriesService) {}
 
+  @UsePipes(ValidationPipe)
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoriesService.create(createCategoryDto);
+    return this._categoriesService.create(createCategoryDto);
   }
 
   @Get()
   findAll() {
-    return this.categoriesService.findAll();
+    return this._categoriesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+    return this._categoriesService.findOne(+id);
   }
 
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateCategoryDto: UpdateCategoryDto,
+    @Body() updateCategoryDto: Partial<UpdateCategoryDto>,
   ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+    return this._categoriesService.update(+id, updateCategoryDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+    return this._categoriesService.remove(+id);
   }
 }

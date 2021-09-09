@@ -8,11 +8,19 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+
 import { RoleService } from '../services/role.service';
 import { CreateRoleDto } from '../dto/create-role.dto';
 import { UpdateRoleDto } from '../dto/update-role.dto';
+import { Roles } from '../decorators/role.decorator';
+import { RoleType } from '../../../shared/enums';
+import { RoleGuard } from '../guards/role.guard';
 
+@Roles(RoleType.ROOT)
+@UseGuards(AuthGuard('jwt'), RoleGuard)
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

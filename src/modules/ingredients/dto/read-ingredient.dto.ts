@@ -17,6 +17,11 @@ export class ReadIngredientDto {
   readonly description: string;
 
   @Expose()
-  @Type(type => ReadUserDto)
-  readonly authors: ReadUserDto[];
+  @Type(type => ReadUserDto, {
+    discriminator: {
+      property: 'roles',
+      subTypes: [],
+    },
+  })
+  readonly createBy: ReadUserDto;
 }

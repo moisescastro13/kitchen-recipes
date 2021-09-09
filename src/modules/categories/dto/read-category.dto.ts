@@ -1,7 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
 
-Exclude();
+@Exclude()
 export class ReadCategoryDto {
   @Expose()
   @IsNumber()
