@@ -1,5 +1,5 @@
 import { Exclude, Expose, Type } from 'class-transformer';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 import { ReadUserDto } from '../../user/dto';
 import { ReadCategoryDto } from '../../categories/dto';
@@ -10,24 +10,28 @@ import { ReadIngredientDto } from '../../ingredients/dto/read-ingredient.dto';
 export class ReadRecipeDto {
   @Expose()
   @IsNumber()
-  id: number;
+  readonly id: number;
+
+  @Expose()
+  @IsString()
+  readonly name: string;
 
   @Expose()
   @Type(type => ReadRecipeDetailsDto)
-  recipeDetails: ReadRecipeDetailsDto;
+  readonly recipeDetails: ReadRecipeDetailsDto;
 
   @Expose()
   @Type(type => ReadCategoryDto)
-  category: ReadCategoryDto;
+  readonly category: ReadCategoryDto;
 
   @Expose()
   @Type(type => ReadUserDto)
-  createdBy: ReadUserDto;
+  readonly createdBy: ReadUserDto;
 
   @Expose()
   @Type(type => ReadIngredientDto)
-  ingredients: ReadIngredientDto[];
+  readonly ingredients: ReadIngredientDto[];
 
   @Expose()
-  approved: boolean;
+  readonly approved: boolean;
 }

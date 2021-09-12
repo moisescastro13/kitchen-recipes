@@ -1,19 +1,20 @@
 import { IsArray, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { CategoryEntity } from '../../categories/entities/category.entity';
 import { CreateRecipeDetailsDto } from './create-recipeDetails.dto';
 
 export class CreateRecipeDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  readonly name: string;
 
   @IsNotEmpty()
   @IsInt()
-  category: number;
+  readonly category: number;
 
   @IsNotEmpty()
-  recipeDetails: CreateRecipeDetailsDto;
+  readonly recipeDetails: CreateRecipeDetailsDto;
 
   @IsNotEmpty()
   @IsArray()
-  ingredients: number[];
+  readonly ingredients: number[];
 }
