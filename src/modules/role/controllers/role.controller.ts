@@ -19,8 +19,8 @@ import { Roles } from '../decorators/role.decorator';
 import { RoleType } from '../../../shared/enums';
 import { RoleGuard } from '../guards/role.guard';
 
-@Roles(RoleType.ROOT)
-@UseGuards(AuthGuard('jwt'), RoleGuard)
+//@Roles(RoleType.ROOT)
+//@UseGuards(AuthGuard('jwt'), RoleGuard)
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}

@@ -20,13 +20,13 @@ import { Roles } from '../../role/decorators/role.decorator';
 import { RoleGuard } from '../../role/guards/role.guard';
 import { RoleType } from '../../../shared/enums';
 
-@UseGuards(AuthGuard('jwt'))
+//@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
   constructor(private readonly _userService: UserService) {}
 
-  @Roles(RoleType.ROOT, RoleType.ADMIN)
-  @UseGuards(RoleGuard)
+  //@Roles(RoleType.ROOT, RoleType.ADMIN)
+  //@UseGuards(RoleGuard)
   @Get()
   getAll(): Promise<ReadUserDto[]> {
     return this._userService.getAll();
@@ -53,8 +53,8 @@ export class UserController {
     return this._userService.delete(id);
   }
 
-  @Roles(RoleType.ROOT)
-  @UseGuards(RoleGuard)
+  //@Roles(RoleType.ROOT)
+  //@UseGuards(RoleGuard)
   @Post('setRole/:userId/:roleId')
   setRoleToUser(
     @Param('userId', ParseIntPipe) userId: number,

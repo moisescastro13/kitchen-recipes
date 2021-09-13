@@ -23,8 +23,6 @@ export class ReadUserDto {
   readonly details: ReadUserDetailDto;
 
   @Expose()
-  @Type(type => ReadRoleDto, {
-    discriminator: { property: 'id', subTypes: [] },
-  })
+  @Type(type => ReadRoleDto)
   readonly roles: ReadRoleDto[];
 }

@@ -6,6 +6,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -13,6 +14,8 @@ import {
 import { UserDetailsEntity } from './userDetails.entity';
 import { RoleEntity } from '../../role/entities/role.entity';
 import { Status } from '../../../shared/enums';
+import { CategoryEntity } from '../../categories/entities/category.entity';
+import { IngredientEntity } from '../../ingredients/entities/ingredient.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -28,13 +31,19 @@ export class UserEntity extends BaseEntity {
   @Column({ type: 'varchar', nullable: false })
   password: string;
 
-  @OneToOne(type => UserDetailsEntity, {
+  @OneToOne(tpye => UserDetailsEntity, {
     cascade: true,
     nullable: false,
     eager: true,
   })
   @JoinColumn({ name: 'detail_id' })
   details: UserDetailsEntity;
+
+  @OneToMany(type => CategoryEntity, category => category.createdBy)
+  categorys: CategoryEntity[];
+
+  @OneToMany(type => IngredientEntity, ingredient => ingredient.createBy)
+  ingredients: IngredientEntity[];
 
   @ManyToMany(type => RoleEntity, role => role.users, { eager: true })
   @JoinTable({ name: 'user_roles' })

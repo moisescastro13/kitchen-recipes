@@ -5,8 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToMany,
-  OneToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,7 +25,7 @@ export class IngredientEntity extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToOne(type => UserEntity, { cascade: true, nullable: true, eager: true })
+  @ManyToOne(type => UserEntity, { cascade: true, nullable: true, eager: true })
   @JoinColumn({ name: 'user_id' })
   createBy: UserEntity;
 

@@ -6,6 +6,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -28,12 +29,11 @@ export class RecipeEntity extends BaseEntity {
   @Column({ nullable: true, type: 'text' })
   urlImage?: string;
 
-  @OneToOne(type => CategoryEntity, {
+  @ManyToOne(type => CategoryEntity, {
     eager: true,
     cascade: true,
     nullable: false,
   })
-  @JoinColumn({ name: 'category_id' })
   category: CategoryEntity;
 
   @OneToOne(type => UserEntity, {
