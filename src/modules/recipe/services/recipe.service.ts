@@ -12,7 +12,7 @@ import {
 import { plainToClass } from 'class-transformer';
 
 import { CreateRecipeDto, ReadRecipeDto, UpdateRecipeDto } from '../dto';
-import { Status } from '../../../shared/enums';
+import { Status, IResultHttpRequest } from '../../../shared';
 
 import { RecipeRepository } from '../recipe.repository';
 import { IngredientRepository } from '../../ingredients/ingredients.repository';
@@ -20,10 +20,9 @@ import { CategoryRepository } from '../../categories/categories.repository';
 import { UserRepository } from '../../user/user.repository';
 
 import { IngredientEntity } from '../../ingredients/entities/ingredient.entity';
-import { UserEntity } from '../../user/entities/user.entity';
 import { RecipeDetailsEntity } from '../entities/recipeDetails.entity';
-import { CategoryEntity } from '../../categories/entities/category.entity';
 import { RecipeEntity } from '../entities/Recipe.entity';
+import { CloudinaryService } from '../../cloudinary/services/cloudinary.service';
 
 @Injectable()
 export class RecipeService {
@@ -36,14 +35,23 @@ export class RecipeService {
     private readonly _categoryRepository: CategoryRepository,
     @InjectRepository(UserRepository)
     private readonly _userRepository: UserRepository,
+    private readonly _cloudinaryService: CloudinaryService,
   ) {}
 
   async create(
     userId: number,
     recipe: CreateRecipeDto,
+    image?: Express.Multer.File,
   ): Promise<ReadRecipeDto> {
-    const user = await this._userRepository.findOne(userId);
-    const category = await this._categoryRepository.findOne(recipe.category);
+    const imgsaved = await this._cloudinaryService
+      .uploadImage(image)
+      .catch(() => {
+        throw new BadRequestException('Eror saving image');
+      });
+    const [user, category] = await Promise.all([
+      this._userRepository.findOne(userId),
+      this._categoryRepository.findOne(recipe.category),
+    ]);
 
     if (!category) throw new NotFoundException('This Category does not exist');
 
@@ -69,6 +77,7 @@ export class RecipeService {
     const newRecipe = await this._recipeRepository.save({
       name: recipe.name,
       category,
+      urlImage: imgsaved.secure_url,
       createdBy: user,
       recipeDetails,
       ingredients,
@@ -85,8 +94,13 @@ export class RecipeService {
     const readRecipeDto = recipes.items.map(recipe =>
       plainToClass(ReadRecipeDto, recipe),
     );
+    const data: IResultHttpRequest = {
+      items: readRecipeDto,
+      meta: recipes.meta,
+      links: recipes.links,
+    };
     return {
-      data: { items: readRecipeDto, meta: recipes.meta, links: recipes.links },
+      data,
     };
   }
 

@@ -9,6 +9,7 @@ import { Configuration } from './config/config.keys';
 import { RecipeModule } from './modules/recipe/recipe.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     RecipeModule,
     IngredientsModule,
     CategoriesModule,
+    CloudinaryModule,
   ],
 })
 export class AppModule {

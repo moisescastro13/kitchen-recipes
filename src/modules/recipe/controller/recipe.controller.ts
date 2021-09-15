@@ -9,11 +9,14 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { RecipeService } from '../services/recipe.service';
 import { Roles } from '../../role/decorators/role.decorator';
@@ -30,8 +33,13 @@ export class RecipeController {
   @Roles(RoleType.ROOT, RoleType.ADMIN, RoleType.GENERAL)
   @UseGuards(AuthGuard('jwt'), RoleGuard)
   //@UsePipes(ValidationPipe)
-  create(@Getuser('id') userId: number, @Body() recipe: CreateRecipeDto) {
-    return this._recipeService.create(userId, recipe);
+  @UseInterceptors(FileInterceptor('image'))
+  create(
+    @Getuser('id') userId: number,
+    @Body() recipe: CreateRecipeDto,
+    @UploadedFile() image,
+  ) {
+    return this._recipeService.create(userId, recipe, image);
   }
 
   @Get('/findByFilter')

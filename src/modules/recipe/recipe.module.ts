@@ -7,6 +7,7 @@ import { RecipeRepository } from './recipe.repository';
 import { IngredientRepository } from '../ingredients/ingredients.repository';
 import { CategoryRepository } from '../categories/categories.repository';
 import { UserRepository } from '../user/user.repository';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserRepository } from '../user/user.repository';
       CategoryRepository,
       UserRepository,
     ]),
+    CloudinaryModule,
   ],
   providers: [RecipeService],
   controllers: [RecipeController],

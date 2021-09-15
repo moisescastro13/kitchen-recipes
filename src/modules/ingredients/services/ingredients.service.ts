@@ -4,11 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate } from 'nestjs-typeorm-paginate';
+
 import { CreateIngredientDto } from '../dto/create-ingredient.dto';
 import { UpdateIngredientDto } from '../dto/update-ingredient.dto';
 import { IngredientRepository } from '../ingredients.repository';
 import { UserRepository } from '../../user/user.repository';
-import { Status } from '../../../shared/enums';
+import { Status, IResultHttpRequest } from '../../../shared';
 import { UserEntity } from '../../user/entities/user.entity';
 import { IngredientEntity } from '../entities/ingredient.entity';
 import { plainToClass } from 'class-transformer';
@@ -44,15 +46,21 @@ export class IngredientService {
     return plainToClass(ReadIngredientDto, savedIngredient);
   }
 
-  async findAll(): Promise<ReadIngredientDto[]> {
-    const ingredients: IngredientEntity[] =
-      await this._ingredientRepository.find({
-        where: { Status: Status.ACTIVE },
-      });
-
-    return ingredients.map(ingredient =>
+  async findAll(options: IPaginationOptions) {
+    const ingredients = await paginate(this._ingredientRepository, options, {
+      where: { Status: Status.ACTIVE },
+    });
+    const readIngredientDto = ingredients.items.map(ingredient =>
       plainToClass(ReadIngredientDto, ingredient),
     );
+    const data: IResultHttpRequest = {
+      items: readIngredientDto,
+      meta: ingredients.meta,
+      links: ingredients.links,
+    };
+    return {
+      data,
+    };
   }
 
   async findOne(id: number): Promise<ReadIngredientDto> {
