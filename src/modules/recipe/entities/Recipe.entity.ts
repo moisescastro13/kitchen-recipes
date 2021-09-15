@@ -36,7 +36,7 @@ export class RecipeEntity extends BaseEntity {
   })
   category: CategoryEntity;
 
-  @OneToOne(type => UserEntity, {
+  @ManyToOne(type => UserEntity, user => user.recipes, {
     eager: true,
     cascade: true,
     nullable: false,

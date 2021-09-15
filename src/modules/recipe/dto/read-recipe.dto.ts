@@ -10,28 +10,30 @@ import { ReadIngredientDto } from '../../ingredients/dto/read-ingredient.dto';
 export class ReadRecipeDto {
   @Expose()
   @IsNumber()
-  readonly id: number;
+  id: number;
 
   @Expose()
   @IsString()
-  readonly name: string;
+  name: string;
 
   @Expose()
   @Type(type => ReadRecipeDetailsDto)
-  readonly recipeDetails: ReadRecipeDetailsDto;
+  recipeDetails: ReadRecipeDetailsDto;
 
   @Expose()
   @Type(type => ReadCategoryDto)
-  readonly category: ReadCategoryDto;
+  category: ReadCategoryDto;
 
   @Expose()
-  @Type(type => ReadUserDto)
-  readonly createdBy: ReadUserDto;
+  @Type(type => ReadUserDto, {
+    discriminator: { property: 'roles', subTypes: [] },
+  })
+  createdBy: ReadUserDto;
 
   @Expose()
   @Type(type => ReadIngredientDto)
-  readonly ingredients: ReadIngredientDto[];
+  ingredients: ReadIngredientDto[];
 
   @Expose()
-  readonly approved: boolean;
+  approved: boolean;
 }

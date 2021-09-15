@@ -5,8 +5,8 @@ import { RecipeController } from './controller/recipe.controller';
 import { RecipeService } from './services/recipe.service';
 import { RecipeRepository } from './recipe.repository';
 import { IngredientRepository } from '../ingredients/ingredients.repository';
-import { UserModule } from '../user/user.module';
 import { CategoryRepository } from '../categories/categories.repository';
+import { UserRepository } from '../user/user.repository';
 
 @Module({
   imports: [
@@ -14,8 +14,8 @@ import { CategoryRepository } from '../categories/categories.repository';
       RecipeRepository,
       IngredientRepository,
       CategoryRepository,
+      UserRepository,
     ]),
-    UserModule,
   ],
   providers: [RecipeService],
   controllers: [RecipeController],

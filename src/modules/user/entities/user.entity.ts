@@ -11,11 +11,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { UserDetailsEntity } from './userDetails.entity';
 import { RoleEntity } from '../../role/entities/role.entity';
 import { Status } from '../../../shared/enums';
 import { CategoryEntity } from '../../categories/entities/category.entity';
 import { IngredientEntity } from '../../ingredients/entities/ingredient.entity';
+import { RecipeEntity } from '../../recipe/entities/Recipe.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -44,6 +46,9 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(type => IngredientEntity, ingredient => ingredient.createBy)
   ingredients: IngredientEntity[];
+
+  @OneToMany(type => RecipeEntity, recipe => recipe.createdBy)
+  recipes: RecipeEntity[];
 
   @ManyToMany(type => RoleEntity, role => role.users, { eager: true })
   @JoinTable({ name: 'user_roles' })

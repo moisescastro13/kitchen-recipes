@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   Param,
@@ -28,14 +29,14 @@ export class RecipeController {
   @Post()
   @Roles(RoleType.ROOT, RoleType.ADMIN, RoleType.GENERAL)
   @UseGuards(AuthGuard('jwt'), RoleGuard)
-  @UsePipes(ValidationPipe)
+  //@UsePipes(ValidationPipe)
   create(@Getuser('id') userId: number, @Body() recipe: CreateRecipeDto) {
     return this._recipeService.create(userId, recipe);
   }
 
-  @Get()
-  getAll() {
-    return this._recipeService.findAll();
+  @Get('/findByFilter')
+  getByFilter(@Query() query) {
+    return this._recipeService.findByFilter(query);
   }
 
   @Get(':id')
@@ -44,12 +45,16 @@ export class RecipeController {
   }
 
   @Get()
-  getByAuthor(@Query() { author }) {
-    return this._recipeService.findByAuthor(author);
-  }
-  @Get()
-  getByCategory(@Query() { category }) {
-    return this._recipeService.findByCategory(category);
+  getAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    return this._recipeService.findAll({
+      page,
+      limit,
+      route: 'http://localhost:3000/api/recipe',
+    });
   }
 
   @Patch(':id')

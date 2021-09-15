@@ -4,9 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 import { plainToClass } from 'class-transformer';
-
-import { UserService } from '../../user/services/user.service';
 
 import { CreateRecipeDto, ReadRecipeDto, UpdateRecipeDto } from '../dto';
 import { Status } from '../../../shared/enums';
@@ -14,10 +17,13 @@ import { Status } from '../../../shared/enums';
 import { RecipeRepository } from '../recipe.repository';
 import { IngredientRepository } from '../../ingredients/ingredients.repository';
 import { CategoryRepository } from '../../categories/categories.repository';
+import { UserRepository } from '../../user/user.repository';
 
 import { IngredientEntity } from '../../ingredients/entities/ingredient.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 import { RecipeDetailsEntity } from '../entities/recipeDetails.entity';
+import { CategoryEntity } from '../../categories/entities/category.entity';
+import { RecipeEntity } from '../entities/Recipe.entity';
 
 @Injectable()
 export class RecipeService {
@@ -28,12 +34,15 @@ export class RecipeService {
     private readonly _ingredientRepository: IngredientRepository,
     @InjectRepository(CategoryRepository)
     private readonly _categoryRepository: CategoryRepository,
-    private readonly _userService: UserService,
+    @InjectRepository(UserRepository)
+    private readonly _userRepository: UserRepository,
   ) {}
 
-  async create(userId: number, recipe: CreateRecipeDto) {
-    const userdto = await this._userService.getOne(userId);
-    const user: UserEntity = plainToClass(UserEntity, userdto);
+  async create(
+    userId: number,
+    recipe: CreateRecipeDto,
+  ): Promise<ReadRecipeDto> {
+    const user = await this._userRepository.findOne(userId);
     const category = await this._categoryRepository.findOne(recipe.category);
 
     if (!category) throw new NotFoundException('This Category does not exist');
@@ -64,14 +73,21 @@ export class RecipeService {
       recipeDetails,
       ingredients,
     });
-    plainToClass(ReadRecipeDto, newRecipe);
+    return plainToClass(ReadRecipeDto, newRecipe);
   }
 
-  async findAll() {
-    const recipes = await this._recipeRepository.find({
-      where: { Status: Status.ACTIVE },
-    });
-    return recipes.map(recipe => plainToClass(ReadRecipeDto, recipe));
+  async findAll(options: IPaginationOptions) {
+    const recipes = await paginate<RecipeEntity>(
+      this._recipeRepository,
+      options,
+      { where: { Status: Status.ACTIVE } },
+    );
+    const readRecipeDto = recipes.items.map(recipe =>
+      plainToClass(ReadRecipeDto, recipe),
+    );
+    return {
+      data: { items: readRecipeDto, meta: recipes.meta, links: recipes.links },
+    };
   }
 
   async findOne(id: number) {
@@ -85,30 +101,51 @@ export class RecipeService {
     return plainToClass(ReadRecipeDto, recipe);
   }
 
-  async findByAuthor(autor: string) {
-    if (!autor) throw new BadRequestException();
-
-    const recipes = await this._recipeRepository.find({
-      where: { createdBy: autor, Status: Status.ACTIVE },
-    });
-    if (!recipes) throw new NotFoundException('This Author has no recipes');
-
-    return recipes.map(recipe => plainToClass(ReadRecipeDto, recipe));
-  }
-
-  async findByCategory(category: string) {
-    const categoryExist = this._categoryRepository.findOne({
-      where: { name: category, Status: Status.ACTIVE },
-    });
-
-    if (!categoryExist)
-      throw new NotFoundException('This category does not exist');
-
-    const recipes = await this._recipeRepository.find({
-      where: { category: categoryExist, Status: Status.ACTIVE },
-    });
-
-    if (!recipes) throw new NotFoundException('This category has no recipes');
+  async findByFilter(query: { author?: string; category?: string }) {
+    let recipes: RecipeEntity[];
+    const [categoryExist, authorExist] = await Promise.all([
+      await this._categoryRepository.findOne({
+        where: { name: query.category },
+      }),
+      await this._userRepository.findOne({
+        where: { username: query.author },
+      }),
+    ]);
+    /* if (!(category && author)) {
+      recipes = await this._recipeRepository
+        .createQueryBuilder('recipe')
+        .leftJoinAndSelect('recipe.category', 'category')
+        .leftJoinAndSelect('recipe.createdBy', 'createdBy')
+        .leftJoinAndSelect('recipe.ingredients', 'ingredients')
+        .where('recipe.createdBy = :user', { user: authorExist.id })
+        .orWhere('recipe.category = :category', { category: categoryExist.id })
+        .andWhere('recipe.Status = :Status', { Status: Status.ACTIVE })
+        .getMany();
+    } else { */
+    //hay que refactorizar
+    if (query.category) {
+      recipes = await this._recipeRepository.find({
+        where: {
+          category: categoryExist,
+          Status: Status.ACTIVE,
+        },
+      });
+    } else if (query.author) {
+      recipes = await this._recipeRepository.find({
+        where: {
+          createdBy: authorExist,
+          Status: Status.ACTIVE,
+        },
+      });
+    } else {
+      recipes = await this._recipeRepository.find({
+        where: {
+          category: categoryExist,
+          createdBy: authorExist,
+          Status: Status.ACTIVE,
+        },
+      });
+    }
 
     return recipes.map(recipe => plainToClass(ReadRecipeDto, recipe));
   }
